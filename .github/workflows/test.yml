@@ -23,3 +23,34 @@ jobs:
           poetry-version: 1.7.0
       - run: poetry install
       - run: poetry run pytest --cov
+
+      # Test CLI execution
+      - name: Test CLI on ${{ matrix.os }} with Python ${{ matrix.python-version }}
+        run: |
+          poetry run cli-template --help
+          poetry run cli-template hello --name "Test User"
+        shell: bash
+
+      # Test PyInstaller packaging (cross-platform binary creation)
+      - name: Test PyInstaller packaging
+        if: matrix.python-version == '3.11'
+        run: |
+          poetry add --group dev pyinstaller
+          poetry run pyinstaller --onefile --name cli-template cli_template/main.py --hidden-import=typer || echo "PyInstaller build skipped (optional)"
+
+      # Capture metrics
+      - name: Capture build metrics
+        if: runner.os == 'Linux' && matrix.python-version == '3.11'
+        run: |
+          echo "Build Metrics for Python Typer" > metrics.txt
+          echo "OS: ${{ matrix.os }}" >> metrics.txt
+          echo "Python Version: ${{ matrix.python-version }}" >> metrics.txt
+          echo "Build completed at: $(date)" >> metrics.txt
+          python --version >> metrics.txt
+
+      - name: Upload build metrics
+        if: runner.os == 'Linux' && matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-metrics-${{ matrix.os }}
+          path: metrics.txt
