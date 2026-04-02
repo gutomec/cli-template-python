@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "cli-template-python"
+version = "0.1.0"
+description = "Production CLI template with Typer and Poetry"
+authors = ["CLI Squad <team@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "cli", from = "src"}]
+
+[tool.poetry.scripts]
+cli-template = "cli.main:app"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+typer = "^0.9.0"
+pydantic = "^2.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+pytest-asyncio = "^0.21.0"
+pytest-cov = "^4.0"
+mypy = "^1.0"
+black = "^23.0"
+ruff = "^0.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I"]
